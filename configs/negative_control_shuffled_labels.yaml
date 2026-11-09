@@ -1,0 +1,30 @@
+name: negative_control_shuffled_labels
+assignment: expanded
+subjects: [S1, S2, S3, S4, S5, S6, S7, S8]
+
+model:
+  type: cnn1d
+  conv_channels: [16, 32, 64]
+  kernel_size: 7
+  dropout: 0.1
+
+loss:
+  type: mse
+
+# Negative control: training labels are randomly permuted before training
+# (X stays in its original order). Validation/test are always evaluated
+# against the TRUE labels, so this tests whether the model can still get a
+# low error on real data despite there being no genuine X-y relationship to
+# learn from during training. Expected ("healthy") outcome: performance
+# collapses toward predicting the training-label mean, i.e. much worse than
+# baseline_expanded.yaml, which is otherwise an identical config.
+negative_control:
+  shuffle_train_labels: true
+  shuffle_seed: 42
+
+training:
+  epochs: 30
+  batch_size: 64
+  lr: 0.001
+  weight_decay: 0.0001
+  seed: 42

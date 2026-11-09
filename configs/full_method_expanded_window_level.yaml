@@ -1,0 +1,44 @@
+name: full_method_expanded_window_level
+# Identical to full_method_expanded.yaml, except the train/val/test split is
+# built by window_level_split below instead of the subject-level `assignment`
+# (kept here for config-schema validity, but ignored once window_level_split
+# is enabled). Secondary, leakage-illustration comparison only -- not a
+# recommended evaluation protocol; see data/splits.apply_window_level_split.
+assignment: expanded
+subjects: [S1, S2, S3, S4, S5, S6, S7, S8]
+
+model:
+  type: cnn1d
+  conv_channels: [16, 32, 64]
+  kernel_size: 7
+  dropout: 0.1
+
+loss:
+  type: huber
+  delta: 1.0
+  reduction: mean
+
+augmentation:
+  enabled: true
+  noise_std: 0.03
+  amplitude_scale_range: [0.9, 1.1]
+  offset_range: [-0.1, 0.1]
+  dropout_fraction: 0.07
+
+paired_training:
+  extra_data_loss: false
+  consistency_lambda: 0.5
+  pairing_strategy: "true"
+
+window_level_split:
+  enabled: true
+  seed: 42
+  train_frac: 0.70
+  val_frac: 0.15
+
+training:
+  epochs: 30
+  batch_size: 64
+  lr: 0.001
+  weight_decay: 0.0001
+  seed: 42

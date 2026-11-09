@@ -1,0 +1,7 @@
+name: expanded_reshuffle_1
+# Mechanical circular shift of [S1..S8] by 2 positions (not chosen based on
+# subject profiles/outcomes): rotated order [S3,S4,S5,S6,S7,S8,S1,S2], same
+# train=4/val=1/test=3 role sizes as assignment_expanded.yaml.
+train_subjects: [S3, S4, S5, S6]
+val_subjects: [S7]
+test_subjects: [S8, S1, S2]

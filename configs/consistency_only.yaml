@@ -1,0 +1,39 @@
+name: consistency_only
+assignment: default
+subjects: [S1, S2, S3, S4, S5]
+
+model:
+  type: cnn1d
+  conv_channels: [16, 32, 64]
+  kernel_size: 7
+  dropout: 0.1
+
+loss:
+  type: mse  # standard loss -- ablation: full method minus the robust loss
+
+augmentation:
+  enabled: true
+  noise_std: 0.03
+  amplitude_scale_range: [0.9, 1.1]
+  offset_range: [-0.1, 0.1]
+  dropout_fraction: 0.07
+
+# Ablation: consistency term between predictions on x and the augmented view
+# x', NO extra-data term -- isolates the effect of the consistency penalty
+# itself from simply training on more/varied data (config D).
+# consistency_lambda=0.5 is a starting choice (not tuned): large enough that
+# the consistency term is not negligible relative to the regression loss
+# (whose scale is ~O(1) in the standardized-target space -- see the
+# residual-coverage diagnostic in evaluation/metrics.py), without dominating
+# it outright.
+paired_training:
+  extra_data_loss: false
+  consistency_lambda: 0.5
+  pairing_strategy: "true"
+
+training:
+  epochs: 30
+  batch_size: 64
+  lr: 0.001
+  weight_decay: 0.0001
+  seed: 42

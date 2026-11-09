@@ -1,0 +1,42 @@
+name: negative_control_random_pairing
+assignment: expanded
+subjects: [S1, S2, S3, S4, S5, S6, S7, S8]
+
+model:
+  type: cnn1d
+  conv_channels: [16, 32, 64]
+  kernel_size: 7
+  dropout: 0.1
+
+# Same loss as full_method_expanded.yaml, so this is a direct negative-control
+# comparison against it: only pairing_strategy changes.
+loss:
+  type: huber
+  delta: 1.0
+  reduction: mean
+
+augmentation:
+  enabled: true
+  noise_std: 0.03
+  amplitude_scale_range: [0.9, 1.1]
+  offset_range: [-0.1, 0.1]
+  dropout_fraction: 0.07
+
+# Negative control: x is paired with an augmented view of a DIFFERENT,
+# randomly chosen window (a per-batch cyclic shift by a random amount,
+# redrawn every batch -- see training/pairing.py), instead of its own
+# augmented view. The consistency term is computed on this mismatched pair.
+# If full_method_expanded.yaml's gain over augmentation_only_expanded.yaml
+# genuinely depends on the pairing being correct, this should shrink or
+# reverse that gain.
+paired_training:
+  extra_data_loss: false
+  consistency_lambda: 0.5
+  pairing_strategy: "random"
+
+training:
+  epochs: 30
+  batch_size: 64
+  lr: 0.001
+  weight_decay: 0.0001
+  seed: 42

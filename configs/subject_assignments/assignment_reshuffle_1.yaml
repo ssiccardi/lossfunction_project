@@ -1,0 +1,4 @@
+name: reshuffle_1
+train_subjects: [S2, S3, S4]
+val_subjects: [S5]
+test_subjects: [S1]

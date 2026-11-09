@@ -1,0 +1,21 @@
+name: robust_loss_only_expanded
+assignment: expanded
+subjects: [S1, S2, S3, S4, S5, S6, S7, S8]
+
+model:
+  type: cnn1d
+  conv_channels: [16, 32, 64]
+  kernel_size: 7
+  dropout: 0.1
+
+loss:
+  type: huber
+  delta: 1.0       # in standardized-target units (train-set z-score space), not bpm
+  reduction: mean
+
+training:
+  epochs: 30
+  batch_size: 64
+  lr: 0.001
+  weight_decay: 0.0001
+  seed: 42

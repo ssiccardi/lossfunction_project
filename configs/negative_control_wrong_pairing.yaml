@@ -1,0 +1,40 @@
+name: negative_control_wrong_pairing
+assignment: expanded
+subjects: [S1, S2, S3, S4, S5, S6, S7, S8]
+
+model:
+  type: cnn1d
+  conv_channels: [16, 32, 64]
+  kernel_size: 7
+  dropout: 0.1
+
+# Same loss as full_method_expanded.yaml, so this is a direct negative-control
+# comparison against it: only pairing_strategy changes.
+loss:
+  type: huber
+  delta: 1.0
+  reduction: mean
+
+augmentation:
+  enabled: true
+  noise_std: 0.03
+  amplitude_scale_range: [0.9, 1.1]
+  offset_range: [-0.1, 0.1]
+  dropout_fraction: 0.07
+
+# Negative control: x is paired with an augmented view of a DIFFERENT window,
+# via a FIXED (not randomized) per-batch cyclic shift -- a deterministic,
+# reproducible mismatch, stricter/more adversarial than "random" pairing
+# since it never coincides with the true pairing by chance across batches.
+paired_training:
+  extra_data_loss: false
+  consistency_lambda: 0.5
+  pairing_strategy: "wrong"
+  wrong_shift: 1
+
+training:
+  epochs: 30
+  batch_size: 64
+  lr: 0.001
+  weight_decay: 0.0001
+  seed: 42

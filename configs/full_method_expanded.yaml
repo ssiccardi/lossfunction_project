@@ -1,0 +1,40 @@
+name: full_method_expanded
+assignment: expanded
+subjects: [S1, S2, S3, S4, S5, S6, S7, S8]
+
+model:
+  type: cnn1d
+  conv_channels: [16, 32, 64]
+  kernel_size: 7
+  dropout: 0.1
+
+# Core deliverable: robust loss + augmentation + consistency term, combined.
+# Everything else (model, data, splits, optimizer,
+# evaluation) is identical to every other config, so any difference in
+# results is attributable to this combination of training-time mechanisms.
+loss:
+  type: huber
+  delta: 1.0  # in standardized-target units, same as robust_loss_only_expanded.yaml
+  reduction: mean
+
+augmentation:
+  enabled: true
+  noise_std: 0.03
+  amplitude_scale_range: [0.9, 1.1]
+  offset_range: [-0.1, 0.1]
+  dropout_fraction: 0.07
+
+# Same consistency_lambda as consistency_only_expanded.yaml, so the two
+# configs are directly comparable (the only difference between them is
+# loss.type).
+paired_training:
+  extra_data_loss: false
+  consistency_lambda: 0.5
+  pairing_strategy: "true"
+
+training:
+  epochs: 30
+  batch_size: 64
+  lr: 0.001
+  weight_decay: 0.0001
+  seed: 42

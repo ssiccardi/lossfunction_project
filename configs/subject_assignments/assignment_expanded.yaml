@@ -1,0 +1,4 @@
+name: expanded
+train_subjects: [S1, S2, S3, S4]
+val_subjects: [S5]
+test_subjects: [S6, S7, S8]

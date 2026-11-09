@@ -1,0 +1,4 @@
+name: default
+train_subjects: [S1, S2, S3]
+val_subjects: [S4]
+test_subjects: [S5]
